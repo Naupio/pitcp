@@ -3,7 +3,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/6]).
+-export([start_link/7]).
 
 %% gen_server call_back function
 -export([init/1, handle_call/3, handle_cast/2
@@ -12,16 +12,17 @@
 -define(SERVER, ?MODULE).
 -define(TABLE,?SERVER).
 
-start_link(Ref, NumIndex, ListenSocket, ProMod, ProModOpt, OtherOpt) ->
+start_link(Ref, NumIndex, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup) ->
     gen_server:start_link({local,list_to_atom(lists:concat([ProMod,'_','acceptor','_',NumIndex]))}
-            ,?SERVER, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt], []).
+            ,?SERVER, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup], []).
 
-init([Ref, ListenSocket, ProMod, ProModOpt, OtherOpt]) ->
+init([Ref, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup]) ->
     State = #{ref => Ref
         , listen_socket => ListenSocket
         , pro_mod => ProMod
         , pro_mod_opt => ProModOpt
         , other_opt => OtherOpt
+        , listener_sup => ListenerSup
     },
 
     gen_server:cast(self(), loop_accept),
@@ -36,12 +37,13 @@ handle_cast(loop_accept, State) ->
         , listen_socket := ListenSocket
         , pro_mod_opt := ProModOpt
         , other_opt := OtherOpt
+        , listener_sup := ListenerSup
         } = State,
 
     case piotcp_util:accept(ListenSocket) of
         {ok, ClientSocket} ->
             {_, ClientSup, _, _} = lists:keyfind({piotcp_client_sup, Ref}, 1,
-                                        supervisor:which_children(piotcp_sup)),
+                                        supervisor:which_children(ListenerSup)),
             {ok, ConnPid} = supervisor:start_child(ClientSup, [Ref,ClientSocket,ProModOpt,OtherOpt]),
             case ConnPid of
                 undefined -> error_to_do;

@@ -30,7 +30,7 @@ start_link() ->
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
     SupFlags = #{
-                strategy => rest_for_one,
+                strategy => one_for_one,
                 intensity => 10,
                 period => 1
                     },

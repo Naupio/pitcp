@@ -14,15 +14,16 @@
 
 start_link(Ref, LisOpt, ProMod, ProModOpt, OtherOpt) ->
     gen_server:start_link({local,list_to_atom(lists:concat([ProMod,'_','piotcp_listener']))}
-                        ,?SERVER, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt], []).
+                        ,?SERVER, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt, self()], []).
 
-init([Ref, LisOpt, ProMod, ProModOpt, OtherOpt]) ->
+init([Ref, LisOpt, ProMod, ProModOpt, OtherOpt, ListenerSup]) ->
     self() ! init,
     State = #{ref => Ref
             , lis_opt => LisOpt
             , pro_mod => ProMod
             , pro_mod_opt => ProModOpt
             , other_opt => OtherOpt
+            , listener_sup => ListenerSup
             },
     {ok, State}.
 
@@ -38,6 +39,7 @@ handle_info(init, State) ->
         , pro_mod := ProMod
         , pro_mod_opt := ProModOpt
         , other_opt := OtherOpt
+        , listener_sup := ListenerSup
     } = State,
 
     NewLisOpt = listen_option_pre_process(LisOpt),
@@ -45,14 +47,14 @@ handle_info(init, State) ->
     {ok, ListenSocket} = piotcp_util:listen(NewLisOpt),
 
     ChildSpecAcceptorSup = #{id => {piotcp_acceptor_sup, Ref}
-                   , start => {piotcp_acceptor_sup, start_link, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt]}
+                   , start => {piotcp_acceptor_sup, start_link, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup]}
                    , restart => permanent
                    , shutdown => infinity
                    , type => supervisor
                    , modules => [piotcp_acceptor_sup]
                    },
 
-    supervisor:start_child(piotcp_sup, ChildSpecAcceptorSup),
+    supervisor:start_child(ListenerSup, ChildSpecAcceptorSup),
 
     ChildSpecClientSup = #{id => {piotcp_client_sup, Ref}
                    , start => {piotcp_client_sup, start_link, [Ref, ProMod]}
@@ -62,7 +64,7 @@ handle_info(init, State) ->
                    , modules => [piotcp_client_sup]
                    },
 
-    supervisor:start_child(piotcp_sup, ChildSpecClientSup),
+    supervisor:start_child(ListenerSup, ChildSpecClientSup),
 
     {noreply, State#{listen_socket => ListenSocket}};
 
