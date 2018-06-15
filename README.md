@@ -1,7 +1,7 @@
 # piotcp
 =====
 
-An simple tcp server for Erlang.
+**piotcp** is a socket acceptor pool for TCP protocols.
 
 # LICENSE
 - The [MIT License](./LICENSE)  
