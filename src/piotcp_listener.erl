@@ -7,7 +7,7 @@
 
 %% gen_server call_back function
 -export([init/1, handle_call/3, handle_cast/2
-        , handle_info/2, teminate/2, code_change/3]).
+        , handle_info/2, terminate/2, code_change/3]).
 
 -define(SERVER, ?MODULE).
 -define(TABLE,?SERVER).
@@ -71,7 +71,7 @@ handle_info(init, State) ->
 handle_info(_Msg, _State) ->
     {noreply, _State}.
 
-teminate(_Reson, _State) ->
+terminate(_Reson, _State) ->
     ok.
 
 code_change(_OldVsn, _State, _Extra) ->
