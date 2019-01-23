@@ -1,4 +1,4 @@
--module(piotcp_acceptor).
+-module(pitcp_acceptor).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(gen_server).
@@ -40,15 +40,15 @@ handle_cast(loop_accept, State) ->
         , listener_sup := ListenerSup
         } = State,
 
-    case piotcp_util:accept(ListenSocket) of
+    case pitcp_util:accept(ListenSocket) of
         {ok, ClientSocket} ->
-            {_, ClientSup, _, _} = lists:keyfind({piotcp_client_sup, Ref}, 1,
+            {_, ClientSup, _, _} = lists:keyfind({pitcp_client_sup, Ref}, 1,
                                         supervisor:which_children(ListenerSup)),
             {ok, ConnPid} = supervisor:start_child(ClientSup, [Ref,ClientSocket,ProModOpt,OtherOpt]),
             case ConnPid of
                 undefined -> error_to_do;
                 ConnPid when is_pid(ConnPid) ->
-                    piotcp_util:controlling_process(ClientSocket, ConnPid)
+                    pitcp_util:controlling_process(ClientSocket, ConnPid)
             end;
         _ ->
             error_to_do

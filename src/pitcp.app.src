@@ -1,0 +1,20 @@
+{application, pitcp,
+ [{description, "An OTP application"},
+  {vsn, "0.2.0"},
+  {registered, [pitcp_sup, pitcp_server]},
+  {mod, { pitcp_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, ['pitcp','pitcp_util','pitcp_sup'
+            ,'pitcp_server','pitcp_protocol','pitcp_listener'
+            ,'pitcp_conn','pitcp_conn_sup','pitcp_app'
+            ,'pitcp_acceptor','pitcp_acceptor_sup'
+            ,'pitcp_ws','pitcp_ws_protocol']},
+
+  {maintainers, ["Naupio Z.Y. Huang"]},
+  {licenses, ["MIT"]},
+  {links, []}
+ ]}.

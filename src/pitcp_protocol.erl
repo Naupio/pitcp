@@ -1,4 +1,4 @@
--module(piotcp_protocol).
+-module(pitcp_protocol).
 -author("Naupio Z.Y. Huang").
 
 -callback start_tcp(Ref::any()

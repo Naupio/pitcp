@@ -1,4 +1,4 @@
--module(piotcp_server).
+-module(pitcp_server).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(gen_server).

@@ -1,4 +1,4 @@
--module(piotcp_listener).
+-module(pitcp_listener).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(gen_server).
@@ -13,7 +13,7 @@
 -define(TABLE,?SERVER).
 
 start_link(Ref, LisOpt, ProMod, ProModOpt, OtherOpt) ->
-    gen_server:start_link({local,list_to_atom(lists:concat([ProMod,'_','piotcp_listener']))}
+    gen_server:start_link({local,list_to_atom(lists:concat([ProMod,'_','pitcp_listener']))}
                         ,?SERVER, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt, self()], []).
 
 init([Ref, LisOpt, ProMod, ProModOpt, OtherOpt, ListenerSup]) ->
@@ -44,24 +44,24 @@ handle_info(init, State) ->
 
     NewLisOpt = listen_option_pre_process(LisOpt),
 
-    {ok, ListenSocket} = piotcp_util:listen(NewLisOpt),
+    {ok, ListenSocket} = pitcp_util:listen(NewLisOpt),
 
-    ChildSpecAcceptorSup = #{id => {piotcp_acceptor_sup, Ref}
-                   , start => {piotcp_acceptor_sup, start_link, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup]}
+    ChildSpecAcceptorSup = #{id => {pitcp_acceptor_sup, Ref}
+                   , start => {pitcp_acceptor_sup, start_link, [Ref, ListenSocket, ProMod, ProModOpt, OtherOpt, ListenerSup]}
                    , restart => permanent
                    , shutdown => infinity
                    , type => supervisor
-                   , modules => [piotcp_acceptor_sup]
+                   , modules => [pitcp_acceptor_sup]
                    },
 
     supervisor:start_child(ListenerSup, ChildSpecAcceptorSup),
 
-    ChildSpecClientSup = #{id => {piotcp_client_sup, Ref}
-                   , start => {piotcp_client_sup, start_link, [Ref, ProMod]}
+    ChildSpecClientSup = #{id => {pitcp_client_sup, Ref}
+                   , start => {pitcp_client_sup, start_link, [Ref, ProMod]}
                    , restart => permanent
                    , shutdown => infinity
                    , type => supervisor
-                   , modules => [piotcp_client_sup]
+                   , modules => [pitcp_client_sup]
                    },
 
     supervisor:start_child(ListenerSup, ChildSpecClientSup),

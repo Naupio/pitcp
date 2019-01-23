@@ -1,4 +1,4 @@
--module(piotcp_listener_sup).
+-module(pitcp_listener_sup).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(supervisor).
@@ -9,7 +9,7 @@
 -define(SERVER, ?MODULE).
 
 start_link(Ref, LisOpt, ProMod, ProModOpt, OtherOpt) ->
-    supervisor:start_link({local,list_to_atom(lists:concat([ProMod,'_','piotcp_listener_sup']))}
+    supervisor:start_link({local,list_to_atom(lists:concat([ProMod,'_','pitcp_listener_sup']))}
                         ,?SERVER, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt]).
 
 init( [Ref, LisOpt, ProMod, ProModOpt, OtherOpt]) ->
@@ -19,12 +19,12 @@ init( [Ref, LisOpt, ProMod, ProModOpt, OtherOpt]) ->
         period => 1
     },
     ChildSpec = #{  
-                    id => {piotcp_listener, Ref},
-                    start => {piotcp_listener, start_link, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt]},
+                    id => {pitcp_listener, Ref},
+                    start => {pitcp_listener, start_link, [Ref, LisOpt, ProMod, ProModOpt, OtherOpt]},
                     restart => permanent,
                     shutdown => 30000,
                     type => worker,
-                    modules => [piotcp_listener]
+                    modules => [pitcp_listener]
             },
     {ok, { SupFlags, [ChildSpec]}}.
 

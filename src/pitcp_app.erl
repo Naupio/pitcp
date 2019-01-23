@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc piotcp public API
+%% @doc pitcp public API
 %% @end
 %%%-------------------------------------------------------------------
 
--module(piotcp_app).
+-module(pitcp_app).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(application).
@@ -16,7 +16,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    piotcp_sup:start_link().
+    pitcp_sup:start_link().
 
 %%--------------------------------------------------------------------
 stop(_State) ->

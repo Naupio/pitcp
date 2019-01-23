@@ -1,4 +1,4 @@
--module(piotcp_util).
+-module(pitcp_util).
 -author("Naupio Z.Y. Huang").
 
 -export([listen/1, accept/1, controlling_process/2, connect/3, send/2, setopts/2]).

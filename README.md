@@ -1,7 +1,7 @@
-# piotcp
+# pitcp
 =====
 
-**piotcp** is a socket acceptor pool for TCP protocols.
+**pitcp** is a socket acceptor pool for TCP protocols.
 
 # LICENSE
 - The [MIT License](./LICENSE)  
@@ -21,28 +21,28 @@ create a new app project by using rebar3.
 deploy rebar.config.  
 ```erlang
 {deps, 
-    [ {piotcp, {git, "https://github.com/Naupio/piotcp.git", {branch, "master"}}}]
+    [ {pitcp, {git, "https://github.com/Naupio/pitcp.git", {branch, "master"}}}]
 }.
 ```
 
 # Example code
 
-pio_tcp_test.erl
+pitcp_test.erl
 
 ```erlang
--module(pio_tcp_test).
+-module(pitcp_test).
 
 -author("Naupio Z.Y. Huang").
 
 -behaviour(gen_server).
--behaviour(piotcp_protocol).
+-behaviour(pitcp_protocol).
 
 -define(SERVER, ?MODULE).
 
 %% gen_server callback function
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
-%% piotcp_protocol callback function
+%% pitcp_protocol callback function
 -export([start_tcp/4]).
 
 %% api
@@ -52,18 +52,18 @@ pio_tcp_test.erl
 -export([run_listener/0,spawn_conn/1]).
 
 run_listener() ->
-    Ref = pio_tcp_test_ref,
+    Ref = pitcp_test_ref,
     LisOpt = [binary,{port,18080},{packet,0},{active,false},{ip,{127,0,0,1}}],
-    ProMod = pio_tcp_test,
+    ProMod = pitcp_test,
     ProModOpt = [],
     OtherOpt = [],
-    piotcp:start_listener(Ref, LisOpt, ProMod, ProModOpt, OtherOpt).
+    pitcp:start_listener(Ref, LisOpt, ProMod, ProModOpt, OtherOpt).
 
 spawn_conn(TestNum) when is_number(TestNum) andalso (TestNum > 0) ->
     lists:foreach( fun(MsgNum) ->
         spawn(fun() ->
-            {ok,Socket} = piotcp_util:connect({127,0,0,1},18080,[{active,false}]),
-            piotcp_util:send(Socket,<<MsgNum>>),
+            {ok,Socket} = pitcp_util:connect({127,0,0,1},18080,[{active,false}]),
+            pitcp_util:send(Socket,<<MsgNum>>),
             error_logger:info_msg("~n send: ~w ~n",[MsgNum])
         end)
     end,
@@ -80,7 +80,7 @@ start_link(Ref, ClientSocket, ProModOpt, OtherOpt) ->
 
 init([Ref, ClientSocket, ProModOpt, OtherOpt]) ->
     self() ! init,
-    piotcp_util:setopts(ClientSocket,[{active, once}]),
+    pitcp_util:setopts(ClientSocket,[{active, once}]),
     State = #{client_socket => ClientSocket
             , ref => Ref
             , pro_mod_opt => ProModOpt
@@ -96,7 +96,7 @@ handle_call(_Msg, _From, _State) ->
 
 
 handle_cast({send,Data}, #{client_socket := ClientSocket}=State) ->
-    piotcp_util:send(ClientSocket,Data),
+    pitcp_util:send(ClientSocket,Data),
     {noreply, State};
 
 handle_cast(_Msg, _State) ->
@@ -106,7 +106,7 @@ handle_info(init, _State) ->
     {noreply, _State};
 
 handle_info({tcp,ClientSocket,Data}, #{client_socket := ClientSocket}=State) ->
-    piotcp_util:setopts(ClientSocket,[{active, once}]),
+    pitcp_util:setopts(ClientSocket,[{active, once}]),
     ReplyData = handle_tcp_data(Data),
     tcp_send(self(),ReplyData),
     {noreply, State};

@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc piotcp top level supervisor.
+%% @doc pitcp top level supervisor.
 %% @end
 %%%-------------------------------------------------------------------
 
--module(piotcp_sup).
+-module(pitcp_sup).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(supervisor).
@@ -35,12 +35,12 @@ init([]) ->
                 period => 1
                     },
     ChildSpec = [#{
-                    id => piotcp_server,
-                    start => {piotcp_server,start_link,[]},
+                    id => pitcp_server,
+                    start => {pitcp_server,start_link,[]},
                     restart => permanent,
                     shutdown => 30000,
                     type => worker,
-                    modules => [piotcp_server]
+                    modules => [pitcp_server]
                 }],
     {ok, { SupFlags, ChildSpec} }.
 

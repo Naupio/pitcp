@@ -1,4 +1,4 @@
--module(piotcp_client_sup).
+-module(pitcp_client_sup).
 -author("Naupio Z.Y. Huang").
 
 -behaviour(supervisor).
@@ -7,7 +7,7 @@
 -export([init/1]).
 
 start_link(Ref, ProMod) ->
-    supervisor:start_link({local,list_to_atom(lists:concat([ProMod,'_','piotcp_client_sup']))}
+    supervisor:start_link({local,list_to_atom(lists:concat([ProMod,'_','pitcp_client_sup']))}
                         ,?MODULE, [Ref, ProMod]).
 
 init([Ref, ProMod]) ->
@@ -17,7 +17,7 @@ init([Ref, ProMod]) ->
         period => 5
     },
     ChildSpec = #{  
-                    id => {piotcp_client, Ref, ProMod},
+                    id => {pitcp_client, Ref, ProMod},
                     start => {ProMod, start_tcp, []},
                     restart => transient,
                     shutdown => 30000,
