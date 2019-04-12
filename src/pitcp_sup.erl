@@ -4,6 +4,7 @@
 %%%-------------------------------------------------------------------
 
 -module(pitcp_sup).
+
 -author("Naupio Z.Y. Huang").
 
 -behaviour(supervisor).
@@ -29,21 +30,15 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    SupFlags = #{
-                strategy => one_for_one,
-                intensity => 10,
-                period => 1
-                    },
-    ChildSpec = [#{
-                    id => pitcp_server,
-                    start => {pitcp_server,start_link,[]},
-                    restart => permanent,
-                    shutdown => 30000,
-                    type => worker,
-                    modules => [pitcp_server]
-                }],
-    {ok, { SupFlags, ChildSpec} }.
+    SupFlags = #{strategy => one_for_one, intensity => 10,
+		 period => 1},
+    ChildSpec = [#{id => pitcp_server,
+		   start => {pitcp_server, start_link, []},
+		   restart => permanent, shutdown => 30000, type => worker,
+		   modules => [pitcp_server]}],
+    {ok, {SupFlags, ChildSpec}}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
