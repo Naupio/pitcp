@@ -1,0 +1,16 @@
+{application, piweb,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {piweb_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    pitcp
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.

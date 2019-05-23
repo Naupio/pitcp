@@ -44,7 +44,7 @@ spawn_conn(TestNum)
 					pitcp_util:send(Socket, <<MsgNum>>),
 					error_logger:info_msg("~n send: ~w ~n",
 							      [MsgNum]),
-                    ok = gen_tcp:close(Socket)
+					ok = gen_tcp:close(Socket)
 				end)
 		  end,
 		  lists:seq(1, TestNum)).

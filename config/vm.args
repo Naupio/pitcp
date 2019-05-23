@@ -1,0 +1,6 @@
+-sname piweb
+
+-setcookie piweb_cookie
+
++K true
++A30
