@@ -1,7 +1,7 @@
 # pitcp
-=====
+------
 
-Just a project for researching, don't used.
+Just a researching project for Erlang/OTP, don't used.
 
 # LICENSE
 - The [MIT License](./LICENSE)  
